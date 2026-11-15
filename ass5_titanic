@@ -1,0 +1,65 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler, LabelEncoder
+
+# Load the dataset
+df = pd.read_csv("D:/AIML/Titanic/Titanic-Dataset.csv")
+print("Original Dataset:")
+df
+
+
+# Data cleaning
+df = df.drop_duplicates()
+
+# Check missing values
+print("\nMissing Values:")
+df.isnull().sum()
+
+# Handle missing values
+df["Age"] = df["Age"].fillna(df["Age"].median())
+df["Fare"] = df["Fare"].fillna(df["Fare"].median())
+df = df.drop(columns=["Cabin"], errors="ignore")
+df
+
+# Encode categorical columns
+sex_encoder = LabelEncoder()
+embarked_encoder = LabelEncoder()
+
+df["Sex"] = sex_encoder.fit_transform(df["Sex"])
+df["Embarked"] = embarked_encoder.fit_transform(df["Embarked"])
+# Standardize numerical columns
+scaler = StandardScaler()
+df[["Age", "Fare"]] = scaler.fit_transform(df[["Age", "Fare"]])
+
+print("\nDataset After Pre-processing:")
+df
+
+
+# Statistical analysis
+print("\nStatistical Analysis:")
+df.describe()
+
+# Select features and target
+X = df[["Pclass", "Age", "SibSp", "Parch",
+        "Fare", "Sex", "Embarked"]]
+
+y = df["Survived"]
+
+# Split into training and testing data
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+print("\nTraining Data:", X_train.shape)
+print("Testing Data:", X_test.shape)
+
+# Visualize Age and Fare distributions
+df[["Age", "Fare"]].hist(figsize=(8, 4))
+plt.tight_layout()
+plt.show()
+
+# Visualize outliers using box plots
+df[["Age", "Fare"]].plot(kind="box")
+plt.show()
