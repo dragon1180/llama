@@ -1,0 +1,96 @@
+kb = [
+    ({"engine_not_starting", "clicking"}, "weak_battery"),
+    ({"weak_battery"}, "charge_battery"),
+    ({"engine_hot", "low_coolant"}, "coolant_problem"),
+    ({"coolant_problem"}, "add_coolant"),
+    ({"brake_noise"}, "brake_problem"),
+    ({"brake_problem"}, "check_brakes"),
+    ({"fuel_low"}, "fuel_problem"),
+    ({"fuel_problem"}, "add_fuel")
+]
+
+solutions = [
+    "charge_battery",
+    "add_coolant",
+    "check_brakes",
+    "add_fuel"
+]
+
+def getSymptoms():
+    facts = set()
+    questions = {
+        "engine_not_starting": "Is the engine not starting?",
+        "clicking": "Do you hear a clicking sound?",
+        "engine_hot": "Is the engine overheating?",
+        "low_coolant": "Is the coolant low?",
+        "brake_noise": "Are the brakes making noise?",
+        "fuel_low": "Is the fuel low?"
+    }
+
+    for fact, question in questions.items():
+        answer = input(question + " (y/n): ")
+        if answer.lower() == "y":
+            facts.add(fact)
+
+    return facts
+
+def forwardChaining(kb, facts):
+    known = set(facts)
+    while True:
+        new = False
+        for conditions, result in kb:
+            if conditions.issubset(known) and result not in known:
+                known.add(result)
+                new = True
+        if not new:
+            break
+    return known
+
+def backwardChaining(kb, facts, goal):
+    if goal in facts:
+        return True
+    for conditions, result in kb:
+        if result == goal:
+            for condition in conditions:
+                if not backwardChaining(kb, facts, condition):
+                    break
+            else:
+                return True
+    return False
+
+def main():
+    while True:
+        print("\n--- CAR TROUBLESHOOTING ---")
+        print("1. Forward Chaining")
+        print("2. Backward Chaining")
+        print("3. Exit")
+
+        choice = input("Enter choice: ")
+        if choice == "1":
+            facts = getSymptoms()
+            result = forwardChaining(kb, facts)
+            print("\nResult:")
+            print("Facts:\n")
+            for fact in result:
+                print(fact)
+            print("\nSolutions:\n")
+            for solution in solutions:
+                if solution in result:
+                    print(solution)
+               
+        elif choice == "2":
+            facts = getSymptoms()
+            print("\nEnter goal:")
+            goal = input("Goal: ")
+
+            if backwardChaining(kb, facts, goal):
+                print("\nGoal proved.")
+            else:
+                print("\nGoal cannot be proved.")
+
+        elif choice == "3":
+            print("Thank you!")
+            break
+
+        else:
+            print("Invalid choice.")
