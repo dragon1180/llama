@@ -1,0 +1,77 @@
+
+import heapq
+graph = {}
+heuristics = {}
+num_edges = int(input("Enter the total number of edges: "))
+
+print("\nEnter each edge details:")
+for _ in range(num_edges):
+    src = input("Enter source node name: ")
+    srcw = int(input(f"Enter heuristic weight for source '{src}': "))
+
+    dest = input("Enter destination node name: ")
+    destw = int(input(f"Enter heuristic weight for destination '{dest}': "))
+
+    heuristics[src] = srcw
+    heuristics[dest] = destw
+
+    if src not in graph:
+        graph[src] = []
+
+    graph[src].append((dest, destw))
+
+print(graph)
+
+print("\nHeuristic Values:")
+print(heuristics)
+
+closelist = set()
+priorityq = []
+parent = {}
+path_found = False
+
+start = input("\nEnter the starting node: ")
+goal = input("Enter the ending node: ")
+
+heapq.heappush(priorityq, (heuristics[start], start))
+print("\nTraversal Order:")
+
+while priorityq:
+    h_val, current_node = heapq.heappop(priorityq)
+
+    if current_node in closelist:
+        continue
+
+    closelist.add(current_node)
+
+    print(f"Visiting: {current_node} (h={h_val})")
+
+    if current_node == goal:
+        print("\nGoal Reached!")
+        path_found = True
+        break
+
+    for neighbor_name, neighbor_h in graph[current_node]:
+        if neighbor_name not in closelist:
+            if neighbor_name not in parent:
+                parent[neighbor_name] = current_node
+
+            heapq.heappush(priorityq, (neighbor_h, neighbor_name))
+
+if path_found:
+
+    path = []
+    current = goal
+
+    while current != start:
+        path.append(current)
+        current = parent[current]
+
+    path.append(start)
+    path.reverse()
+
+    print("\nOptimal Greedy Path:")
+    print(" -> ".join(path))
+
+else:
+    print("\nGoal could not be reached from the starting node.")
