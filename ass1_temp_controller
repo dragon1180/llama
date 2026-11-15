@@ -1,0 +1,63 @@
+
+# Intelligent Agent for Industrial Temperature Controller
+
+set_temp = float(input("Enter desired temperature (°C): "))
+
+tolerance = 2
+
+print("\nIndustrial Temperature Controller")
+
+while True:
+
+    print("\n1. Start Temperature Monitoring")
+    print("2. Stop Temperature Monitoring")
+
+    choice = input("Enter your choice (1/2): ")
+
+    # Start monitoring
+    if choice == "1":
+
+        print("\nTemperature Monitoring Started!")
+
+        while True:
+
+            # Directly take float input
+            temp = float(input("\nEnter current temperature: "))
+
+            if temp < set_temp - tolerance:
+
+                print("Temperature Status: LOW")
+                print("Heater: ON")
+                print("Cooling Fan: OFF")
+                print("Action: Increasing temperature.")
+
+            elif temp > set_temp + tolerance:
+
+                print("Temperature Status: HIGH")
+                print("Heater: OFF")
+                print("Cooling Fan: ON")
+                print("Action: Decreasing temperature.")
+
+            else:
+
+                print("Temperature Status: NORMAL")
+                print("Heater: OFF")
+                print("Cooling Fan: OFF")
+                print("Action: Maintaining temperature.")
+
+            print("-----------------------------")
+
+            again = input("Check temperature again? (yes/no): ")
+
+            if again.lower() != "yes":
+                print("\nMonitoring paused.")
+                break
+
+    # Stop controller
+    elif choice == "2":
+
+        print("\nIndustrial Temperature Controller Stopped.")
+        break
+
+    else:
+        print("Invalid choice! Please select 1 or 2.")
