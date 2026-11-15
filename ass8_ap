@@ -1,0 +1,184 @@
+import pandas as pd
+import numpy as np
+
+ap = pd.read_csv("Admission_Predict - Admission_Predict.csv")
+
+ap
+
+ap['Admit'] = (ap['Chance of Admit']>0.87).astype(int)
+ap
+
+ap = ap.drop(columns=['Chance of Admit','Serial No.'])
+ap
+
+ap.isna().sum()
+
+ap= ap.fillna(ap.median(numeric_only= True))
+
+ap.isna().sum()
+
+from sklearn.model_selection import train_test_split
+X = ap.drop(columns=['Admit'])
+y= ap['Admit']
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X,
+    y,
+    test_size=0.20,
+    random_state=42
+)
+
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import accuracy_score, confusion_matrix, precision_score,recall_score, f1_score
+
+ap_entropy = DecisionTreeClassifier(criterion='entropy')
+ap_entropy.fit(X_train, y_train)
+
+y_pred1 = ap_entropy.predict(X_train)
+
+confusion_matrix(y_train,y_pred1)
+
+accuracy = accuracy_score(y_train,y_pred1)
+precision = precision_score(y_train,y_pred1)
+recall = recall_score(y_train,y_pred1)
+f1 = f1_score(y_train,y_pred1)
+print(f"Accuracy: {accuracy}")
+print(f"Precision: {precision}")
+print(f"Recall: {recall}")
+print(f"F1 Score: {f1}")
+
+y_pred = ap_entropy.predict(X_test)
+
+confusion_matrix(y_test,y_pred)
+
+accuracy = accuracy_score(y_test,y_pred)
+precision = precision_score(y_test,y_pred)
+recall = recall_score(y_test,y_pred)
+f1 = f1_score(y_test,y_pred)
+print(f"Accuracy: {accuracy}")
+print(f"Precision: {precision}")
+print(f"Recall: {recall}")
+print(f"F1 Score: {f1}")
+
+import matplotlib.pyplot as plt
+from sklearn.tree import plot_tree
+plt.figure(figsize=(15,10))
+plot_tree(ap_entropy, filled=True)
+plt.show()
+
+ap_gini = DecisionTreeClassifier(criterion='gini')
+ap_gini.fit(X_train, y_train)
+
+y_pred1_ginni = ap_gini.predict(X_train)
+
+confusion_matrix(y_train,y_pred1_ginni)
+
+accuracy_gini = accuracy_score(y_train,y_pred1_ginni)
+precision_gini = precision_score(y_train,y_pred1_ginni)
+recall_gini = recall_score(y_train,y_pred1_ginni)
+f1_gini = f1_score(y_train,y_pred1_ginni)
+print(f"Accuracy: {accuracy_gini}")
+print(f"Precision: {precision_gini}")
+print(f"Recall: {recall_gini}")
+print(f"F1 Score: {f1_gini}")
+
+y_pred_ginni = ap_gini.predict(X_test)
+
+confusion_matrix(y_test,y_pred_ginni)
+
+accuracy_gini = accuracy_score(y_test,y_pred_ginni)
+precision_gini = precision_score(y_test,y_pred_ginni)
+recall_gini = recall_score(y_test,y_pred_ginni)
+f1_gini = f1_score(y_test,y_pred_ginni)
+print(f"Accuracy: {accuracy_gini}")
+print(f"Precision: {precision_gini}")
+print(f"Recall: {recall_gini}")
+print(f"F1 Score: {f1_gini}")
+
+plt.figure(figsize=(15,10))
+plot_tree(ap_gini,filled = True)
+plt.show()
+
+from sklearn.naive_bayes import GaussianNB
+nb = GaussianNB()
+nb.fit(X_train, y_train)
+
+y_pred_nb = nb.predict(X_train)
+
+confussion_matrix_nb = confusion_matrix(y_train,y_pred_nb)
+confussion_matrix_nb
+
+accuracy_nb = accuracy_score(y_train,y_pred_nb)
+precision_nb = precision_score(y_train,y_pred_nb)
+recall_nb = recall_score(y_train,y_pred_nb)
+f1_nb = f1_score(y_train,y_pred_nb)
+print(f"Accuracy: {accuracy_nb}")
+print(f"Precision: {precision_nb}")
+print(f"Recall: {recall_nb}")
+print(f"F1 Score: {f1_nb}")
+
+y_pred1_nb = nb.predict(X_test)
+
+confussion_matrix_nb = confusion_matrix(y_test,y_pred1_nb)
+confussion_matrix_nb
+
+accuracy_nb = accuracy_score(y_test,y_pred1_nb)
+precision_nb = precision_score(y_test,y_pred1_nb)
+recall_nb = recall_score(y_test,y_pred1_nb)
+f1_nb = f1_score(y_test,y_pred1_nb)
+print(f"Accuracy: {accuracy_nb}")
+print(f"Precision: {precision_nb}")
+print(f"Recall: {recall_nb}")
+print(f"F1 Score: {f1_nb}")
+
+X_train
+
+x = X_train[['GRE Score','TOEFL Score']]
+
+nb1 = GaussianNB()
+nb1.fit(x,y_train)
+y_pred_new= nb1.predict(x)
+
+from sklearn.inspection import DecisionBoundaryDisplay
+import matplotlib.pyplot as plt
+
+DecisionBoundaryDisplay.from_estimator(nb1,x,response_method='predict',alpha=0.3)
+plt.scatter(x['GRE Score'] ,x['TOEFL Score'],c =y_pred_new )
+
+ap
+
+gre = float(input("GRE Score (290-340): "))
+toefl = float(input("TOEFL Score (90-120): "))
+rating = float(input("University Rating (1-5): "))
+sop = float(input("SOP Strength (1-5): "))
+lor = float(input("LOR Strength (1-5): "))
+cgpa = float(input("CGPA (1-10): "))
+research = float(input("Research Experience (1 for Yes, 0 for No): "))
+
+new_data = pd.DataFrame([{
+    'GRE Score': gre,
+    'TOEFL Score': toefl,
+    'University Rating': rating,
+    'SOP': sop,
+    'LORTOEFL Score': lor,
+    'CGPA': cgpa,
+    'Research': research
+}])
+
+prediction = ap_entropy.predict(new_data)
+if prediction == 0:
+  print('You are not eligible for admission')
+else:
+  print('You are eligible for admission')
+
+prediction = ap_gini.predict(new_data)
+if prediction == 0:
+  print('You are not eligible for admission')
+else:
+  print('You are eligible for admission')
+
+prediction = nb.predict(new_data)
+if prediction == 0:
+  print('You are not eligible for admission')
+else:
+  print('You are eligible for admission')
