@@ -1,0 +1,173 @@
+# forward n backward chaining (disease prediction)
+
+rules = {
+    "flu": ["fever", "cough"],
+    "cold": ["cough", "sneezing"],
+    "infection": ["fever", "body_pain"],
+    "pneumonia": ["fever", "cough", "breathing_problem"],
+    "take_medicine": ["flu"],
+    "take_rest": ["flu"]
+
+}
+
+known_facts = []
+matching = []
+ans = []
+facts = []
+
+for i in rules:
+    for j in rules[i]:
+        facts.append(j)
+
+facts.append("flu")
+facts.append("cold")
+facts.append("infection")
+facts.append("pneumonia")
+facts.append("take_medicine")
+facts.append("take_rest")
+
+
+# -------- Forward chaining function --------
+def forward(rules, known_facts):
+    new_fact = True
+
+    while new_fact:
+        new_fact = False
+        antecedents = known_facts[len(known_facts) - 1]
+
+        for consequent in rules:
+            if antecedents in known_facts and antecedents in rules[consequent]:
+                if consequent not in known_facts:
+                    print(known_facts, "->", consequent)
+                    known_facts.append(consequent)
+                    new_fact = True
+
+    return known_facts[len(known_facts) - 1]
+
+
+# -------- Backward chaining function --------
+def backward(rules, known_facts, goal):
+
+    if goal in known_facts:
+        return True
+
+    matching.clear()
+
+    for i in rules:
+        if goal == i:
+            for j in rules[i]:
+                matching.append(j)
+                ans.append(j)
+
+    if len(matching) == 0:
+        return False
+
+    for i in matching:
+        istrue = True
+
+        if i in known_facts:
+            return True
+
+        for a in rules[i]:
+            ans.append(a)
+
+            if not backward(rules, known_facts, a):
+                istrue = False
+                break
+
+        if istrue:
+            known_facts = goal
+            return True
+
+    return False
+
+
+# -------- Main program --------
+print("Welcome to an intelligent disease detection system")
+print("\n------Menu------")
+print("1. Forward chaining")
+print("2. Backward chaining")
+print("3. Exit\n")
+
+while True:
+    option = input("Enter your choice: ")
+    print("\n")
+
+    match option:
+
+        case "1":
+
+            print("1.fever\n2.cough\n3.sneezing\n4.body_pain\n5.breathing_problem\n6.flu\n7.cold\n8.infection\n9.pneumonia\n10.take_medicine\n11.take_rest")
+
+            a = {
+                "1": "fever",
+                "2": "cough",
+                "3": "sneezing",
+                "4": "body_pain",
+                "5": "breathing_problem",
+                "6": "flu",
+                "7": "cold",
+                "8": "infection",
+                "9": "pneumonia",
+                "10": "take_medicine",
+                "11": "take_rest"
+            }
+
+            m = int(input("Enter the no of known facts: "))
+
+            while m > 0:
+                i = input("Enter the no fact: ")
+
+                if a[i] not in facts:
+                    print("invalid fact give again")
+                else:
+                    known_facts.append(a[i])
+                    m -= 1
+
+            print("ans : ", forward(rules, known_facts), "\n")
+
+        case "2":
+            m = 1
+
+            while m > 0:
+
+                print("1.fever\n2.cough\n3.sneezing\n4.body_pain\n5.breathing_problem\n6.flu\n7.cold\n8.infection\n9.pneumonia\n10.take_medicine\n11.take_rest")
+
+                a = {
+                    "1": "fever",
+                    "2": "cough",
+                    "3": "sneezing",
+                    "4": "body_pain",
+                    "5": "breathing_problem",
+                    "6": "flu",
+                    "7": "cold",
+                    "8": "infection",
+                    "9": "pneumonia",
+                    "10": "take_medicine",
+                    "11": "take_rest"
+                }
+
+                n = input("Enter the no Goal: ")
+
+                if a[n] not in facts:
+                    print("invalid goal give again")
+                else:
+                    goal = a[n]
+                    m -= 1
+
+            known_facts = ["fever", "cough"]
+
+            if backward(rules, known_facts, goal):
+                print("Goal : ", goal)
+                print("Goal is proved")
+                print("because : ", ans)
+            else:
+                print("Goal is not proved")
+
+
+        case "3":
+            print("Exiting......")
+            break
+
+        case _:
+            print("Invalid input")
