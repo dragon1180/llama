@@ -1,0 +1,154 @@
+import pandas as pd
+import numpy as np
+
+from google.colab import files
+
+uploaded = files.upload()
+
+hp = pd.read_csv('HP.csv')
+
+hp
+
+hp.isna().sum()
+
+
+ hp = hp.fillna(hp.median(numeric_only=True))
+
+hp.isna().sum()
+
+from sklearn.preprocessing import LabelEncoder
+le = LabelEncoder()
+hp["mainroad"] = le.fit_transform(hp["mainroad"])
+hp["guestroom"] = le.fit_transform(hp["guestroom"])
+hp["basement"] = le.fit_transform(hp["basement"])
+hp["hotwaterheating"] = le.fit_transform(hp["hotwaterheating"])
+hp["airconditioning"] = le.fit_transform(hp["airconditioning"])
+hp["prefarea"] = le.fit_transform(hp["prefarea"])
+hp
+
+hp['furnishingstatus'] = hp['furnishingstatus'].replace(to_replace=['unfurnished', 'semi-furnished', 'furnished'], value=[0,1,2])
+hp
+
+from sklearn.model_selection import train_test_split
+X = hp['area']
+y= hp['price']
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X,
+    y,
+    test_size=0.20,
+    random_state=42
+)
+
+print(X_train, X_test, y_train, y_test)
+
+from sklearn.linear_model import LinearRegression
+reg = LinearRegression()
+
+x_train1 = X_train.to_frame()
+x_test1 = X_test.to_frame()
+y_train1 = y_train.to_frame()
+y_test1 = y_test.to_frame()
+
+reg = LinearRegression().fit(x_train1,y_train1)
+
+reg.coef_
+
+y_pred = reg.predict(x_test1)
+
+from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
+mse = mean_squared_error(y_test1, y_pred)
+mae = mean_absolute_error(y_test1, y_pred)
+r2 = r2_score(y_test1, y_pred)
+print("MSE : ", mse)
+print("MAE : ", mae)
+print("R2 Score : ", r2)
+
+import matplotlib.pyplot as plt
+y_pred1 = reg.predict(x_train1)
+plt.scatter(x_train1,y_train1, label = 'Actual Data')
+plt.plot(x_train1,y_pred1,color = 'red', label = 'Regression Line')
+plt.legend()
+
+
+lX = hp.drop(columns=['price'])
+ly= hp['price']
+
+lX_train, lX_test, ly_train, ly_test = train_test_split(
+    lX,
+    ly,
+    test_size=0.20,
+    random_state=42
+)
+lr = LinearRegression()
+lr.fit(lX_train, ly_train)
+ly_pred = lr.predict(lX_test)
+
+
+linear_mse = mean_squared_error(ly_test, ly_pred)
+linear_mae = mean_absolute_error(ly_test, ly_pred)
+linear_r2 = r2_score(ly_test, ly_pred)
+
+print("MSE:", linear_mse)
+print("MAE:", linear_mae)
+print("R2 Score:", linear_r2)
+
+pX = hp.drop(columns=['price'])
+py = hp['price']
+
+pX_train, pX_test, py_train, py_test = train_test_split(pX, py, test_size=0.2, random_state=42)
+
+from sklearn.preprocessing import PolynomialFeatures
+poly = PolynomialFeatures(degree=2)
+pX_train = poly.fit_transform(pX_train)
+pX_test = poly.fit_transform(pX_test)
+
+pr = LinearRegression()
+pr.fit(pX_train, py_train)
+py_pred = pr.predict(pX_test)
+
+p_mse = mean_squared_error(py_test, py_pred)
+p_mae = mean_absolute_error(py_test, py_pred)
+p_r2 = r2_score(py_test, py_pred)
+
+print("P_MSE:", p_mse)
+print("P_MAE:", p_mae)
+print("P_R2 Score:", p_r2)
+
+area = float(input("Enter area: "))
+bedrooms = int(input("Enter bedrooms: "))
+bathrooms = int(input("Enter bathrooms: "))
+stories = int(input("Enter stories: "))
+
+mainroad = int(input("Mainroad (0=No, 1=Yes): "))
+guestroom = int(input("Guestroom (0=No, 1=Yes): "))
+basement = int(input("Basement (0=No, 1=Yes): "))
+
+hotwaterheating = int(input("Hot water heating (0=No, 1=Yes): "))
+airconditioning = int(input("Air conditioning (0=No, 1=Yes): "))
+
+parking = int(input("Parking spaces (0-3): "))
+prefarea = int(input("Preferred area (0=No, 1=Yes): "))
+
+print("Furnishing Status:")
+print("0 = Unfurnished")
+print("1 = Semi-Furnished")
+print("2 = Furnished")
+
+furnishingstatus = int(input("Enter furnishing status: "))
+
+
+data1 = pd.DataFrame([
+    [area, bedrooms, bathrooms, stories, mainroad, guestroom,
+     basement, hotwaterheating, airconditioning, parking,
+     prefarea, furnishingstatus]
+], columns=[
+    'area', 'bedrooms', 'bathrooms', 'stories', 'mainroad',
+    'guestroom', 'basement', 'hotwaterheating',
+    'airconditioning', 'parking', 'prefarea',
+    'furnishingstatus'
+])
+
+
+poly_prediction = pr.predict(poly.fit_transform(data1))
+print("Predicted House Price:", poly_prediction[0])
