@@ -1,0 +1,120 @@
+import pandas as pd
+
+data=pd.read_csv("C:/Users/shrid/Downloads/mlpractice/Car.csv")
+
+data
+
+data.shape
+
+data.columns
+
+data.duplicated().sum()
+
+data=data.drop_duplicates()
+
+data.duplicated().sum()
+
+data.isna().sum()
+
+data=data.copy()
+data["selling_price"] = data["selling_price"].fillna(data["selling_price"].median())
+data["km_driven"] = data["km_driven"].fillna(data["km_driven"].median())
+
+data["fuel"] = data["fuel"].fillna(data["fuel"].mode()[0])
+data["transmission"] = data["transmission"].fillna(data["transmission"].mode()[0])
+
+data.isna().sum()
+
+#### statistical  analysis
+
+data[["year", "selling_price", "km_driven"]].mean()
+
+data[["year", "selling_price", "km_driven"]].median()
+
+data[["year", "selling_price", "km_driven"]].mode()
+
+data[["year", "selling_price", "km_driven"]].min()
+
+data[["year", "selling_price", "km_driven"]].max()
+
+data[["year", "selling_price", "km_driven"]].std()
+
+import matplotlib.pyplot as plt
+
+plt.hist(data["year"], edgecolor="black")
+plt.title("Distribution of Year")
+plt.xlabel("Year")
+plt.ylabel("Frequency")
+plt.show()
+
+plt.hist(data["selling_price"], edgecolor="black")
+plt.title("Distribution of Selling Price")
+plt.xlabel("Selling Price")
+plt.ylabel("Frequency")
+plt.show()
+
+plt.hist(data["km_driven"],edgecolor="black")
+plt.title("Distribution of Kilometres Driven")
+plt.xlabel("Kilometres Driven")
+plt.ylabel("Frequency")
+plt.show()
+
+plt.figure(figsize=(7, 4))
+plt.boxplot(data["year"])
+plt.title("Boxplot of Year")
+plt.ylabel("Year")
+plt.show()
+
+plt.boxplot(data["selling_price"])
+plt.title("Boxplot of Selling Price")
+plt.ylabel("Selling Price")
+plt.show()
+
+plt.boxplot(data["km_driven"])
+plt.title("Boxplot of Kilometres Driven")
+plt.ylabel("Kilometres Driven")
+
+from sklearn.preprocessing import MinMaxScaler
+
+scaler = MinMaxScaler()
+data[['year', 'km_driven']] = scaler.fit_transform(data[['year', 'km_driven']])
+data[['year', 'km_driven']].head()
+
+data["seller_type"].unique()
+
+data["fuel"].unique()
+
+data["transmission"].unique()
+
+data["owner"].unique()
+
+###encoding
+from sklearn.preprocessing import LabelEncoder
+
+le =LabelEncoder()
+data=data.copy()
+data["fuel"] = le.fit_transform(data["fuel"])
+data["seller_type"] = le.fit_transform(data["seller_type"])
+data["transmission"] = le.fit_transform(data["transmission"])
+data["owner"] = le.fit_transform(data["owner"])
+
+data
+
+data.columns
+
+from sklearn.model_selection import train_test_split
+
+x = data.drop("selling_price", axis=1)
+y = data["selling_price"]
+
+x
+
+y
+
+x_train,x_test,y_train,y_test=train_test_split(x,y,test_size=0.2,random_state=42)
+
+x_train.shape
+
+x_test.shape
+
+y_train
