@@ -1,0 +1,97 @@
+def home_automation_agent(temperature, person_present, room_dark):
+
+    
+    if temperature > 28:
+        fan = "ON"
+    else:
+        fan = "OFF"
+
+    if temperature > 30 and person_present:
+        ac = "ON"
+    else:
+        ac = "OFF"
+
+    
+    if person_present and room_dark:
+        light = "ON"
+    else:
+        light = "OFF"
+
+    print("\n--- Home Automation Agent ---")
+    print("Temperature:", temperature, "°C")
+    print("Person Present:", person_present)
+    print("Room Dark:", room_dark)
+
+    print("\nAgent Decisions:")
+    print("Fan   :", fan)
+    print("AC    :", ac)
+    print("Light :", light)
+
+
+
+automation = True
+
+while automation:
+
+    print("\n===== SMART HOME AUTOMATION =====")
+    print("1. Run Automation")
+    print("2. Turn OFF Automation")
+
+    choice = input("Enter your choice (1/2): ")
+
+   
+    if choice == "2":
+        automation = False
+        print("\nAutomation system turned OFF.")
+        print("Goodbye!")
+        break
+
+    elif choice != "1":
+        print("Invalid choice! Please enter 1 or 2.")
+        continue
+
+    while True:
+        temperature_input = input("Enter temperature: ")
+
+        
+        valid_temperature = temperature_input.replace(".", "", 1).replace("-", "", 1).isdigit()
+
+        if valid_temperature:
+            temperature = float(temperature_input)
+            break
+        else:
+            print("Invalid temperature! Please enter a number.")
+
+    while True:
+        person = input("Is a person present? (yes/no): ").lower()
+
+        if person == "yes":
+            person_present = True
+            break
+
+        elif person == "no":
+            person_present = False
+            break
+
+        else:
+            print("Invalid input! Please enter yes or no.")
+
+    while True:
+        dark = input("Is the room dark? (yes/no): ").lower()
+
+        if dark == "yes":
+            room_dark = True
+            break
+
+        elif dark == "no":
+            room_dark = False
+            break
+
+        else:
+            print("Invalid input! Please enter yes or no.")
+
+    home_automation_agent(
+        temperature,
+        person_present,
+        room_dark
+    )
