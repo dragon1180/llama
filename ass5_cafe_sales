@@ -1,0 +1,61 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder, StandardScaler
+
+#Load dataset
+df = pd.read_csv("Cafe_Sales.csv")
+
+#Missing and duplicate handling
+df = df.drop_duplicates()
+df = df.replace("UNKNOWN", pd.NA)
+
+df["Quantity"] = pd.to_numeric(df["Quantity"], errors="coerce")
+df["Price Per Unit"] = pd.to_numeric(df["Price Per Unit"], errors="coerce")
+df["Total Spent"] = pd.to_numeric(df["Total Spent"], errors="coerce")
+
+df["Quantity"] = df["Quantity"].fillna(df["Quantity"].median())
+df["Price Per Unit"] = df["Price Per Unit"].fillna(df["Price Per Unit"].median())
+df["Total Spent"] = df["Total Spent"].fillna(df["Total Spent"].median())
+
+df["Item"] = df["Item"].fillna(df["Item"].mode()[0])
+df["Payment Method"] = df["Payment Method"].fillna(df["Payment Method"].mode()[0])
+df["Location"] = df["Location"].fillna(df["Location"].mode()[0])
+
+#Statistical analysis
+print(df.describe(),"\n")
+print("Quantity:\n Median:",df["Quantity"].median(),"\n Mode:",df["Quantity"].mode()[0])
+print("\nPrice Per Unit:\n Median:",df["Price Per Unit"].median(),"\n Mode:",df["Price Per Unit"].mode()[0])
+print("\nTotal Spent:\n Median:",df["Total Spent"].median(),"\n Mode:",df["Total Spent"].mode()[0])
+
+#Data splitting
+X = df.drop(["Total Spent", "Transaction ID", "Transaction Date"], axis=1)
+y = df["Total Spent"]
+
+X_train, X_test, y_train, y_test = train_test_split(
+X, y, test_size=0.2, random_state=42
+)
+
+# Label Encoding
+le = LabelEncoder()
+
+df["Item"] = le.fit_transform(df["Item"])
+df["Payment Method"] = le.fit_transform(df["Payment Method"])
+df["Location"] = le.fit_transform(df["Location"])
+
+# Feature scaling
+scaler = StandardScaler()
+
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
+print("Training data:", X_train.shape)
+print("Testing data:", X_test.shape)
+
+#Histograms
+df.hist(figsize = (10,8))
+plt.show()
+
+# 8. Boxplots
+df.plot(kind="box", figsize=(10, 6))
+plt.show()
