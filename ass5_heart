@@ -1,0 +1,69 @@
+
+import pandas as pd
+import numpy as np
+
+heart = pd.read_csv("Heart.csv")
+
+heart.describe()
+
+heart = heart.drop(columns=["Unnamed: 0"])
+
+heart
+
+heart.mean(numeric_only = True)
+
+heart.median(numeric_only = True)
+
+heart.mode(numeric_only = True)
+
+heart.std(numeric_only = True)
+
+heart.var(numeric_only = True)
+
+heart = heart.fillna(heart.mean(numeric_only=True))
+
+heart.isna().sum()
+
+from sklearn.preprocessing import LabelEncoder
+le = LabelEncoder()
+heart["Thal"] = le.fit_transform(heart["Thal"])
+heart["AHD"] = le.fit_transform(heart["AHD"])
+heart["ChestPain"] = le.fit_transform(heart["ChestPain"])
+heart
+
+heart.isna().sum()
+
+from sklearn.preprocessing import MinMaxScaler
+
+scaler = MinMaxScaler()
+scaler_heart = scaler.fit_transform(heart)
+heart = pd.DataFrame(scaler_heart, columns = heart.columns)
+heart
+
+import matplotlib.pyplot as plt
+for col in ['Age','RestBP','Chol','MaxHR']:
+    plt.figure(figsize=(8, 5))
+    plt.hist(heart[col])
+    plt.xlabel(col)
+    plt.show()
+
+
+plt.figure(figsize=(8, 5))
+plt.boxplot(heart["Chol"] , orientation='horizontal')
+plt.title("Boxplot")
+plt.show()
+
+
+from sklearn.model_selection import train_test_split
+X = heart.drop(columns=["AHD"])
+y = heart["AHD"]
+X_train, X_test, y_train, y_test = train_test_split(
+    X,
+    y,
+    test_size=0.20,
+    random_state=42,
+    stratify=y
+)
+
+
+print(X_train, X_test, y_train, y_test)
