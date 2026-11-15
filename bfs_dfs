@@ -1,0 +1,86 @@
+from collections import defaultdict, deque
+
+def BFS(graph, start):
+    visited = []
+    queue = deque([start])
+    visited.append(start)
+    result = []
+
+    while queue:
+        print("Queue :", list(queue))
+
+        node = queue.popleft()
+        result.append(node)
+
+        print("Traversal :", result)
+        print("--------------------------------")
+
+        for neighbor in graph[node]:
+            if neighbor not in visited:
+                visited.append(neighbor)
+                queue.append(neighbor)
+
+    print("\nFinal BFS :", result)
+
+
+def DFS(graph, start):
+    visited = []
+    stack = [start]
+    result = []
+
+    while stack:
+        print("Stack :", stack)
+
+        node = stack.pop()
+
+        if node not in visited:
+            visited.append(node)
+            result.append(node)
+
+            print("Traversal :", result)
+            print("--------------------------------")
+
+            for neighbor in reversed(graph[node]):
+                if neighbor not in visited:
+                    stack.append(neighbor)
+
+    print("\nFinal DFS :", result)
+
+
+graph = defaultdict(list)
+
+print("1. BFS")
+print("2. DFS")
+
+choice = int(input("Enter your choice: "))
+
+num_edges = int(input("\nEnter number of edges: "))
+
+print("\nEnter the edges:")
+
+for i in range(num_edges):
+    u = input(f"Enter first node of edge {i + 1}: ")
+    v = input(f"Enter second node of edge {i + 1}: ")
+
+    graph[u].append(v)
+    graph[v].append(u)  # Undirected graph
+
+
+print("\nAdjacency List:")
+for node in graph:
+    print(node, "->", graph[node])
+
+
+start = input("\nEnter the starting node: ")
+
+print()
+
+match choice:
+    case 1:
+        BFS(graph, start)
+ 
+    case 2:
+        DFS(graph, start)
+
+    case _:
+        print("Invalid choice. Please enter 1 for BFS or 2 for DFS.")
