@@ -1,0 +1,223 @@
+import pandas as pd
+import numpy as np
+
+iris = pd.read_csv('iris - iris.csv')
+
+iris
+
+iris.isna().sum()
+
+from sklearn.preprocessing import LabelEncoder
+le = LabelEncoder()
+iris["variety"] = le.fit_transform(iris["variety"])
+iris
+
+from sklearn.model_selection import train_test_split
+X = iris.drop(columns=['variety'])
+y = iris['variety']
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X,
+    y,
+    test_size=0.20,
+    random_state=42
+)
+
+from sklearn.neighbors import KNeighborsClassifier
+
+knn = KNeighborsClassifier(n_neighbors=3)
+knn.fit(X_train, y_train)
+
+y_pred = knn.predict(X_train)
+
+from sklearn.metrics import confusion_matrix
+confusion_matrix(y_train, y_pred)
+
+from sklearn.metrics import accuracy_score,precision_score,recall_score,f1_score
+acc = accuracy_score(y_train, y_pred)
+prec = precision_score(y_train, y_pred, average='micro')
+rec = recall_score(y_train, y_pred, average='micro')
+f1 = f1_score(y_train, y_pred, average='micro')
+
+print("Accuracy:", acc)
+print("Precision:", prec)
+print("Recall:", rec)
+print("F1 Score:", f1)
+
+y_pred_test = knn.predict(X_test)
+
+confusion_matrix(y_test, y_pred_test)
+
+acc_test = accuracy_score(y_test, y_pred_test)
+prec_test = precision_score(y_test, y_pred_test, average='micro')
+rec_test = recall_score(y_test, y_pred_test, average='micro')
+f1_test = f1_score(y_test, y_pred_test, average='micro')
+
+print("Accuracy:", acc_test)
+print("Precision:", prec_test)
+print("Recall:", rec_test)
+print("F1 Score:", f1_test)
+
+knn = KNeighborsClassifier(n_neighbors=5)
+knn.fit(X_train, y_train)
+
+y_pred = knn.predict(X_train)
+
+confusion_matrix(y_train, y_pred)
+
+acc = accuracy_score(y_train, y_pred)
+prec = precision_score(y_train, y_pred, average='micro')
+rec = recall_score(y_train, y_pred, average='micro')
+f1 = f1_score(y_train, y_pred, average='micro')
+print("Accuracy:", acc)
+print("Precision:", prec)
+print("Recall:", rec)
+print("F1 Score:", f1)
+
+y_pred_test = knn.predict(X_test)
+
+confusion_matrix(y_test, y_pred_test)
+
+acc_test = accuracy_score(y_test, y_pred_test)
+prec_test = precision_score(y_test, y_pred_test, average = 'micro')
+rec_test = recall_score(y_test, y_pred_test, average = 'micro')
+f1_test = f1_score(y_test, y_pred_test, average = 'micro')
+print("Accuracy:", acc_test)
+print("Precision:", prec_test)
+print("Recall:", rec_test)
+print("F1 Score:", f1_test)
+
+knn = KNeighborsClassifier(n_neighbors=7)
+knn.fit(X_train, y_train)
+
+y_pred = knn.predict(X_train)
+
+confusion_matrix(y_train, y_pred)
+
+acc = accuracy_score(y_train, y_pred)
+prec = precision_score(y_train, y_pred, average='micro')
+rec = recall_score(y_train, y_pred, average='micro')
+f1 = f1_score(y_train, y_pred, average='micro')
+print("Accuracy:", acc)
+print("Precision:", prec)
+print("Recall:", rec)
+print("F1 Score:", f1)
+
+y_pred_test = knn.predict(X_test)
+
+confusion_matrix(y_test, y_pred_test)
+
+acc_test = accuracy_score(y_test, y_pred_test)
+prec_test = precision_score(y_test, y_pred_test, average = 'micro')
+rec_test = recall_score(y_test, y_pred_test, average = 'micro')
+f1_test = f1_score(y_test, y_pred_test, average = 'micro')
+print("Accuracy:", acc_test)
+print("Precision:", prec_test)
+print("Recall:", rec_test)
+print("F1 Score:", f1_test)
+
+x_petal = X_train[['petal.length','petal.width']]
+
+petal_model = KNeighborsClassifier(n_neighbors=11)
+petal_model.fit(x_petal,y_train)
+y_pred_new= petal_model.predict(x_petal)
+
+from sklearn.inspection import DecisionBoundaryDisplay
+import matplotlib.pyplot as plt
+
+DecisionBoundaryDisplay.from_estimator(petal_model,x_petal,response_method='predict',alpha=0.3)
+plt.scatter(x_petal['petal.length'] ,x_petal['petal.width'],c =y_pred_new )
+
+x_sepal = X_train[['sepal.length','sepal.width']]
+
+sepal_model = KNeighborsClassifier(n_neighbors=11)
+sepal_model.fit(x_sepal,y_train)
+y_pred_new= sepal_model.predict(x_sepal)
+
+DecisionBoundaryDisplay.from_estimator(sepal_model,x_sepal,response_method='predict',alpha=0.3)
+plt.scatter(x_sepal['sepal.length'] ,x_sepal['sepal.width'],c =y_pred_new )
+
+from sklearn.linear_model import LogisticRegression
+lr = LogisticRegression()
+
+lr.fit(X_train, y_train)
+
+y_pred_lr_train=lr.predict(X_train)
+
+confusion_matrix(y_train,y_pred_lr_train)
+
+acc = accuracy_score(y_train, y_pred_lr_train)
+prec = precision_score(y_train, y_pred_lr_train, average='micro')
+rec = recall_score(y_train, y_pred_lr_train, average='micro')
+f1 = f1_score(y_train, y_pred_lr_train, average='micro')
+print("Accuracy:", acc)
+print("Precision:", prec)
+print("Recall:", rec)
+print("F1 Score:", f1)
+
+y_pred_lr_test=lr.predict(X_test)
+
+confusion_matrix(y_test,y_pred_lr_test)
+
+acc_test = accuracy_score(y_test, y_pred_lr_test)
+prec_test = precision_score(y_test, y_pred_lr_test, average='micro')
+rec_test = recall_score(y_test, y_pred_lr_test, average='micro')
+f1_test = f1_score(y_test, y_pred_lr_test, average='micro')
+print("Accuracy:", acc_test)
+print("Precision:", prec_test)
+print("Recall:", rec_test)
+print("F1 Score:", f1_test)
+
+x_petal = X_train[['petal.length','petal.width']]
+
+petal_model_lr = LogisticRegression()
+petal_model_lr.fit(x_petal,y_train)
+y_pred_new= petal_model_lr.predict(x_petal)
+
+DecisionBoundaryDisplay.from_estimator(plr,x_petal,response_method='predict',alpha=0.3)
+plt.scatter(x_petal['petal.length'] ,x_petal['petal.width'],c =y_pred_new )
+
+x_sepal = X_train[['sepal.length','sepal.width']]
+
+sepal_model_lr = LogisticRegression()
+sepal_model_lr.fit(x_sepal,y_train)
+y_pred_new= sepal_model_lr.predict(x_sepal)
+
+DecisionBoundaryDisplay.from_estimator(sepal_model_lr,x_sepal,response_method='predict',alpha=0.3)
+plt.scatter(x_sepal['sepal.length'] ,x_sepal['sepal.width'],c =y_pred_new )
+
+s_L=float(input("enter the sepal length: "))
+s_W=float(input("enter the sepal width: "))
+p_L=float(input("enter the petal length: "))
+p_W=float(input("enter the petal width: "))
+data=pd.DataFrame(
+    {'sepal.length':[s_L],
+    'sepal.width':[s_W],
+    'petal.length':[p_L],
+    'petal.width':[p_W]}
+    )
+
+
+data
+
+y_pred=knn.predict(data)
+
+if y_pred == 0:
+    ans = "Setosa"
+elif y_pred == 1:
+    ans = "Versicolor"
+else:
+    ans = "Virginica"
+
+print(f"your varity is: {ans}")
+
+y_pred_lr = lr.predict(data)
+
+if y_pred == 0:
+    ans = "Setosa"
+elif y_pred == 1:
+    ans = "Versicolor"
+else:
+    ans = "Virginica"
+
+print(f"your varity is: {ans}")
