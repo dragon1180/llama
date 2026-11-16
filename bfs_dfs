@@ -1,86 +1,135 @@
-from collections import defaultdict, deque
 
-def BFS(graph, start):
-    visited = []
-    queue = deque([start])
-    visited.append(start)
-    result = []
+from collections import deque
 
-    while queue:
-        print("Queue :", list(queue))
+graph = {}
+n = int(input("Enter Number of Nodes: "))
+for i in range(n):
 
-        node = queue.popleft()
-        result.append(node)
+    node = input(f"\nEnter Node {i+1}: ")
 
-        print("Traversal :", result)
-        print("--------------------------------")
+    graph[node] = []
 
-        for neighbor in graph[node]:
-            if neighbor not in visited:
-                visited.append(neighbor)
-                queue.append(neighbor)
+    neighbours = int(input(f"Enter Number of Neighbours of {node}: "))
 
-    print("\nFinal BFS :", result)
+    for j in range(neighbours):
 
+        neighbour = input(f"Enter Neighbour {j+1}: ")
 
-def DFS(graph, start):
-    visited = []
-    stack = [start]
-    result = []
+        graph[node].append(neighbour)
 
-    while stack:
-        print("Stack :", stack)
-
-        node = stack.pop()
-
-        if node not in visited:
-            visited.append(node)
-            result.append(node)
-
-            print("Traversal :", result)
-            print("--------------------------------")
-
-            for neighbor in reversed(graph[node]):
-                if neighbor not in visited:
-                    stack.append(neighbor)
-
-    print("\nFinal DFS :", result)
-
-
-graph = defaultdict(list)
-
-print("1. BFS")
-print("2. DFS")
-
-choice = int(input("Enter your choice: "))
-
-num_edges = int(input("\nEnter number of edges: "))
-
-print("\nEnter the edges:")
-
-for i in range(num_edges):
-    u = input(f"Enter first node of edge {i + 1}: ")
-    v = input(f"Enter second node of edge {i + 1}: ")
-
-    graph[u].append(v)
-    graph[v].append(u)  # Undirected graph
-
-
-print("\nAdjacency List:")
+print("\nGraph:")
 for node in graph:
-    print(node, "->", graph[node])
+    print(node, ":", graph[node])
 
+#start and goal inputs
+start = input("\nEnter Start Node: ")
+goal = input("Enter Goal Node: ")
 
-start = input("\nEnter the starting node: ")
+# BFS
 
-print()
+def bfs(start, goal):
 
-match choice:
-    case 1:
-        BFS(graph, start)
- 
-    case 2:
-        DFS(graph, start)
+    visited = []
+    queue = deque()
 
-    case _:
-        print("Invalid choice. Please enter 1 for BFS or 2 for DFS.")
+    queue.append(start)
+    visited.append(start)
+
+    print("\n===== BFS =====")
+
+    while queue:
+
+        current = queue.popleft()
+
+        print("--------------------------------")
+        print("Current Node :", current)
+        print("Queue :", list(queue))
+        print("Visited :", visited)
+
+        if current == goal:
+
+            print("\nGoal Found!")
+            print("Current Path :", visited)
+            return
+
+        for neighbour in graph[current]:
+
+            if neighbour not in visited:
+
+                visited.append(neighbour)
+                queue.append(neighbour)
+
+                print("Added :", neighbour)
+                print("Queue :", list(queue))
+                print("Visited :", visited)
+
+    print("\nGoal Not Found!")
+
+# dfs
+
+def dfs(start, goal):
+
+    visited = []
+    stack = []
+
+    stack.append(start)
+
+    print("\n===== DFS =====")
+
+    while stack:
+
+        current = stack.pop()
+
+        if current not in visited:
+
+            visited.append(current)
+
+            print("--------------------------------")
+            print("Current Node :", current)
+            print("Stack :", stack)
+            print("Visited :", visited)
+
+            if current == goal:
+
+                print("\nGoal Found!")
+                print("Current Path :", visited)
+                return
+
+            for neighbour in reversed(graph[current]):
+
+                if neighbour not in visited:
+
+                    stack.append(neighbour)
+
+                    print("Added :", neighbour)
+                    print("Stack :", stack)
+
+    print("\nGoal Not Found")
+
+# menu
+
+while True:
+
+    print("\n******* MENU *********")
+    print("1. Breadth First Search")
+    print("2. Depth First Search")
+    print("3. Exit")
+
+    choice = int(input("Enter Choice: "))
+
+    if choice == 1:
+
+        bfs(start, goal)
+
+    elif choice == 2:
+
+        dfs(start, goal)
+
+    elif choice == 3:
+
+        print("Program Ended")
+        break
+
+    else:
+
+        print("Invalid Choice")
