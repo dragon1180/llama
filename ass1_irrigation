@@ -1,0 +1,66 @@
+# Fan 
+def fan():
+    temp = int(input("Enter room temperature (°C): "))
+
+    if temp > 30:
+        print("Fan ON !!")
+    else:
+        print("Fan OFF !!")
+
+# Heater 
+def heater():
+    temp = int(input("Enter room temperature (°C): "))
+
+    if temp < 20:
+        print("Heater ON !!")
+    else:
+        print("Heater OFF")
+
+# Light 
+def light():
+    dark = input("Is the room dark? (yes/no): ").lower()
+    presence = input("Is a person present in the room? (yes/no): ").lower()
+
+    if dark == "yes" and presence == "yes" :
+        print("Light ON !!")
+    else:
+        print("Light OFF !!")
+
+# TV 
+def tv():
+    presence = input("Is a person present in the room? (yes/no): ").lower()
+
+    if presence == "yes":
+        print("TV ON")
+    else:
+        print("TV OFF !!")
+
+# Menu 
+while True:
+    print("\n====== SMART HOME MENU ========")
+    print("1. Fan")
+    print("2. Heater")
+    print("3. Light")
+    print("4. TV")
+    print("5. Exit")
+
+    choice = input("Enter your choice: ")
+
+    if choice == "1":
+        fan()
+
+    elif choice == "2":
+        heater()
+
+    elif choice == "3":
+        light()
+
+    elif choice == "4":
+        tv()
+
+    elif choice == "5":
+        print("Exiting Smart Home Agent...")
+        break
+
+    else:
+        print("Invalid choice! Please try again.")
